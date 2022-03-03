@@ -9,21 +9,19 @@ namespace PetTricks.WebApi.Controllers;
 public class MovieController : ControllerBase
 {
     private readonly IOptions<KafkaConfig> _options;
+    private readonly KafkaDependentProducer<Guid, Media> _producer;
 
-    public MovieController(IOptions<KafkaConfig> options)
+    public MovieController(IOptions<KafkaConfig> options, KafkaDependentProducer<Guid, Media> producer)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
+        _producer = producer ?? throw new ArgumentNullException(nameof(producer));
     }
 
     [HttpPut(Name = "CreateMovie")]
     public async Task<Guid> Put([FromBody] Media media, CancellationToken cancellationToken = default)
     {
-        using var producer = new ProducerBuilder<Guid, Media>(new ProducerConfig
-        {
-            BootstrapServers = _options.Value.BootstrapServers,
-        }).SetKeySerializer(new XJsonSerializer<Guid>()).SetValueSerializer(new XJsonSerializer<Media>()).Build();
         var key = Guid.NewGuid();
-        await producer.ProduceAsync(_options.Value.NewMoviesTopic, new Message<Guid, Media>
+        await _producer.ProduceAsync(_options.Value.NewMoviesTopic, new Message<Guid, Media>
         {
             Key = key,
             Value = media

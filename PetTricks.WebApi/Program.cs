@@ -9,6 +9,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<KafkaConfig>(builder.Configuration.GetSection(nameof(KafkaConfig)));
+builder.Services.AddSingleton<KafkaClientHandle>();
+builder.Services.AddSingleton<KafkaDependentProducer<Guid, Media>>();
+builder.Services.AddSingleton<KafkaDependentProducer<Guid, LatestMediaPosition>>();
 
 var app = builder.Build();
 
