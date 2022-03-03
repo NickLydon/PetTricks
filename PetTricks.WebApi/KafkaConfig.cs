@@ -5,4 +5,5 @@ public class KafkaConfig
     public string BootstrapServers { get; set; }
     public string NewMoviesTopic { get; set; }
     public string LatestMediaPositionsTopic { get; set; }
+    public string UsersTopic { get; set; }
 }

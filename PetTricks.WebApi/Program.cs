@@ -12,6 +12,7 @@ builder.Services.Configure<KafkaConfig>(builder.Configuration.GetSection(nameof(
 builder.Services.AddSingleton<KafkaClientHandle>();
 builder.Services.AddSingleton<KafkaDependentProducer<Guid, Media>>();
 builder.Services.AddSingleton<KafkaDependentProducer<Guid, LatestMediaPosition>>();
+builder.Services.AddSingleton<KafkaDependentProducer<Guid, User>>();
 
 var app = builder.Build();
 
