@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Confluent.Kafka;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -24,16 +23,11 @@ public class MovieController : ControllerBase
             BootstrapServers = _options.Value.BootstrapServers,
         }).SetKeySerializer(new XJsonSerializer<Guid>()).SetValueSerializer(new XJsonSerializer<Media>()).Build();
         var key = Guid.NewGuid();
-        await producer.ProduceAsync("new-movies", new Message<Guid, Media>
+        await producer.ProduceAsync(_options.Value.NewMoviesTopic, new Message<Guid, Media>
         {
             Key = key,
             Value = media
         }, cancellationToken: cancellationToken);
         return key;
     }
-}
-
-internal class XJsonSerializer<T> : ISerializer<T>
-{
-    public byte[] Serialize(T data, SerializationContext context) => JsonSerializer.SerializeToUtf8Bytes(data);
 }
